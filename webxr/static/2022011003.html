@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+</head>
+<body>
+    <script>
+        AFRAME.registerComponent('modify-mterials', {
+            init() {
+                console.log("init")
+                this.el.addEventListener('model-loaded', () => {
+                    const obj = this.el.getObject3D('mesh');
+                    obj.traverse(node => {
+                        if ( node.name.indexOf('ship') !== -1 ) {
+                            node.material.color.set('red');
+                        }
+                    });
+                });
+            },
+            tick() {
+                console.log("Tick!")
+            }
+        });
+    </script>
+    <a-scene background="color: #ECECEC">
+        <a-assets>
+            <a-asset-item
+                id="cityModel"
+                src="https://cdn.aframe.io/test-models/models/glTF-2.0/virtualcity/VC.gltf"
+            ></a-asset-item>
+        </a-assets>
+        <a-entity
+            gltf-model="#cityModel"
+            modify-materils
+        ></a-entity>
+    </a-scene>
+</body>
+</html>

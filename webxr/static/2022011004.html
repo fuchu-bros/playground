@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
+</head>
+<body>
+    <script>
+        AFRAME.registerComponent('scale-on-mouseenter', {
+            schema: {
+                to: {default: '2.5 2.5 2.5', type: 'vec3'},
+                from: {default: '2 2 2', type: 'vec3'}
+            },
+            init() {
+                const {data, el} = this;
+                el.addEventListener('mouseenter', () => {
+                    el.object3D.scale.copy(data.to);
+                });
+                console.log("SCALE", el.getAttribute('scale'));
+                el.addEventListener('mouseleave', () => {
+                    el.object3D.scale.copy(data.from);
+                })
+            }
+        });
+    </script>
+    <a-scene>
+        <!-- <a-box color="red" rotation="0 45 45" scale="2 4 2" position="0 0 -4">
+            <a-sphere position="1 0 -3" color="blue"></a-sphere>
+        </a-box> -->
+        <!-- <a-entity id="box" geometry="primitive: box" material="color: blue"></a-entity> -->
+        <a-assets>
+            <img id="boxTexture" src="./mYmmbrp.jpg">
+            <img src="./sechelt.jpg" id="skyTexture" >
+            <img src="./floor.jpg" id="groundTexture">
+        </a-assets>
+        <a-box 
+            src="#boxTexture"
+            position="0 2 -5" 
+            rotation="0 45 45" 
+            scale="2 2 2"
+            animation__position="property: object3D.position.y; to: 2.2; dir: alternate; dur: 2000; loop: true"
+            animation__mouseenter="property: scale; to: 2.3 2.3 2.3; dur: 300; startEvents: mouseenter"
+            animation__mouseleave="property: scale; to: 2 2 2; dur: 300; startEvents: mouseleave"
+        ></a-box>
+        <!-- <a-entity position="0 2 -5" rotation="0 45 45" scale="2 2 2" material="color: red" geometry="primitive: box"></a-entity> -->
+        <!-- <a-entity
+            environment="preset: forest; dressingAmount: 500"
+        ></a-entity> -->
+        <a-sky src="#skyTexture"></a-sky>
+        <!-- <a-plane src="#groundTexture" rotation="-90 0 0" width="30" height="30" repeat="10 10"></a-plane> -->
+
+        <a-entity
+            text="value: Hello, A-Frame!; color: #BBB"
+            position="-0.9 0.2 -3"
+            scale="4 4 4"
+        ></a-entity>
+
+        <a-light type="ambient" color="#445451"></a-light>
+        <a-light type="point" intensity="2" position="2 4 4"></a-light>
+
+        <a-camera>
+            <a-cursor></a-cursor>
+        </a-camera>
+    </a-scene>
+    
+    <script>
+        // const boxEl = document.querySelector('a-box');
+        // boxEl.addEventListener('mouseenter', function(){
+        //     console.log("Enter");
+        //     boxEl.setAttribute('scale', {x: 2, y: 2, z: 2});
+        // });
+    </script>
+</body>
+</html>

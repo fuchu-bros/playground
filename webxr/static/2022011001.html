@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+</head>
+<body>
+    <script>
+        AFRAME.registerComponent('log', {
+            schema: {type: 'string'},
+            init: function(){
+                var stringToLog = this.data;
+                console.log(stringToLog);
+            }
+        });
+        AFRAME.registerComponent('follow', {
+            schema: {
+                target: {type: 'selector'},
+                speed: {type: 'number'}
+            },
+            init: function(){
+                this.directiveVec3 = new THREE.Vector3();
+            },
+            tick: function(time, timeDelta){
+                var directionVec3 = this.directionVec3;
+
+                var targetPosition = this.data.target.object3D.position;
+                var currentPosition = this.el.object3D.position;
+
+                directionVec3.copy(targetPosition).sub(currentPosition);
+
+                var distance = directionVec3.length();
+
+                if (distance < 1) {return;}
+
+                var factor = this.dat.speed / distance;
+                ['x', 'y', 'z'].forEach(axis => {
+                    directionVec3[axis] *= factor * (timeDelta / 1000);
+                });
+
+                this.el.setAttribute('position', {
+                    x: currentPosition.x + directionVec3.x,
+                    y: currentPosition.y + directionVec3.y,
+                    z: currentPosition.z + directionVec3.z
+                });
+            }
+        });
+    </script>
+    <a-scene log="Hello, Scene!">
+        <a-box id="redBox" class="clickable" color="red" log="Hello, Box!!!" position="0 0 -5"></a-box>
+        <a-sphere class="clickable" color="blue" position="2 0 -3" follow="target: #redBox; speed: 1"></a-sphere>
+        <a-box color="green"></a-box>
+        <a-entity light="type: ambient"></a-entity>
+        <a-entity light="type: directional"></a-entity>
+    </a-scene>
+
+    <script>
+        const sceneEl = document.querySelector('a-scene');
+        const entityEl = document.querySelector('a-entity');
+        console.log("Scene", sceneEl);
+        console.log(sceneEl.querySelector('#redBox'));
+        setTimeout(() => {
+            sceneEl.querySelector('#redBox').setAttribute('position', '-3 0 -5');
+
+            entityEl.setAttribute('light', {color: '#ACC', intensity: 0.75});
+        }, 3000);
+        console.log("THREE", THREE);
+    
+    </script>
+</body>
+</html>

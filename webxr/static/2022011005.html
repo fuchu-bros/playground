@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-template-component@3.x.x/dist/aframe-template-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@4.x.x/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@5.x.x/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-proxy-event-component@2.1.0/dist/aframe-proxy-event-component.min.js"></script>
+
+    <!-- https://aframe.io/docs/1.2.0/guides/building-a-360-image-gallery.html -->
+    <script id="link" type="text/html">
+        <a-entity 
+            class="link"
+            geometry="primitive: plane; height: 1; width: 1"
+            material="shader: flat; src: ${thumb}"
+            event-set__mouseeter="_event: mouseenter; scale: 1.2 1.2 1sssssssssssssssssssss"
+            event-set__mouseleave="_event: mouseleave; scale: 1 1 1"
+            event-set__click="_target: #image-360; _delay: 300; material.src: ${src}" 
+            proxy-event="event: click; to: #image-360; as: fade"
+        ></a-entity>
+    </script>
+</head>
+<body>
+    <a-scene>
+        <a-assets>
+            <audio id="click-sound" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
+            <!-- Images. -->
+            <img id="city" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/city.jpg">
+            <img id="city-thumb" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-city.jpg">
+            <img id="cubes" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/cubes.jpg">
+            <img id="cubes-thumb" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-cubes.jpg">
+            <img id="sechelt" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/sechelt.jpg">
+            <img id="sechelt-thumb" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-sechelt.jpg">
+        </a-assets>
+
+        <a-sky 
+            id="image-360" 
+            radius="10" 
+            src="#city"
+            animation__fade="property: components.material.material.color; type: color; from: #FFF; to: #000; dur: 300; startEvents: fade"
+            animation__feedback="property: components.material.material.color; type: color; from: #000; to: #FFF; dur: 300; startEvents: animationcomplete__fade"
+        ></a-sky>
+        
+        <a-entity id="links" layout="type: line; margin: 1.5" position="-3 2 -4">
+            <a-entity template="src: #link" data-thumb="#city-thumb" data-src="#city"></a-entity>
+            <a-entity template="src: #link" data-thumb="#cubes-thumb" data-src="#cubes"></a-entity>
+            <a-entity template="src: #link" data-thumb="#sechelt-thumb" data-src="#sechelt"></a-entity>
+        </a-entity>
+
+        <a-camera>
+            <a-cursor
+                id="cursor"
+                animtion__click="property: scale; from: 0.1 0.1 0.1; to: 1 1 1; easing: easeInCubic; dur: 150; startEvents: click"
+                animation__fusing="property: fusing; from: 1 1 1; to: 0.1 0.1 0.1; easing: easeInCubic; dur: 1500; startEvents: fusing"
+                event-set__mouseenter="_event: mouseenter; color: springgreen"
+                event-set__mouseleave="_event: mouseleave; color: black"
+                raycaster="objects: .link"
+            ></a-cursor>
+        </a-camera>
+    </a-scene>
+</body>
+</html>

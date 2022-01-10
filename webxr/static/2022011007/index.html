@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras@3.3.0/dist/aframe-extras.min.js"></script>
+    <script src="info-mssage.js"></script>
+    <script src="hide-on-enter-ar.js"></script>
+    <script src="ar-shadows.js"></script>
+
+    <script src="background-gradient.js"></script>
+
+    <!-- https://glitch.com/edit/#!/aframe-model-viewer?path=ar-hit-test.js%3A1%3A0 -->
+</head>
+<body>
+    <a-scene
+    
+    >
+        <a-assets>
+            <a-asset-item id="triceratops"
+                src="https://cdn.aframe.io/examples/ar/models/triceratops/scene.gltf"
+                response-type="arraybuffer"
+                crossorigin="anonymous"
+            ></a-asset-item>
+            <a-asset-item id="reticle"
+                src="https://cdn.aframe.io/examples/ar/models/reticle/reticle.gltf"
+                response-type="arraybuffer"
+                crossorigin="anonymous"
+            ></a-asset-item>
+            <img id="shadow" src="https://cdn.glitch.com/20600112-c04b-492c-8190-8a5ccc06f37d%2Fshadow.png?v=1606338852399">
+            <a-asset-item id="messageText" src="./message.html"
+        </a-assets>
+    </a-scene>
+</body>
+</html>
