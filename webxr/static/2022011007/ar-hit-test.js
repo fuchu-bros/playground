@@ -57,8 +57,18 @@ AFRAME.registerComponent('ar-hit-test', {
             xrViewerPose = frame.getViewerPose(this.refSpace);
 
             if (this.xrHitTestSource && xrViewerPose) {
-                // hitTestResults = frame.getHit
+                hitTestResults = frame.getHitTestResults(this.xrHitTestSource);
+                if (hitTestResults.length > 0) {
+                    pose = hitTestResults[0].getPose(this.refSpace);
+
+                    inputMat = new THREE.Matrix4();
+                    inputMat.fromArray(pose.transform.matrix);
+
+                    position = new THREE.Vector3();
+                    position.setFromMatrixPosition(inputMat);
+                    this.el.setAttribute('position', position);
+                }
             }
         }
     }
-})
+});

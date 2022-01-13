@@ -12,7 +12,7 @@ AFRAME.registerComponent('ar-shadows', {
                 this.el.setAttribute('visible', true);
             }
         });
-        this.e.sceneEl.addEventListener('exit-vr', ev => {
+        this.el.sceneEl.addEventListener('exit-vr', ev => {
             if ( this.savedMaterial ) {
                 this.el.object3D.children[0].material = this.savedMaterial;
                 this.savedMaterial = null;

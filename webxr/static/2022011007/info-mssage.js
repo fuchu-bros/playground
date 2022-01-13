@@ -1,11 +1,11 @@
 AFRAME.registerComponent('info-message', {
-    schma: {
+    schema: {
         htmlSrc: {type: 'selector'},
         startOpened: {default: false}
     },
     init() {
         const sceneEl = this.el.sceneEl;
-        const messageEl = this.messageEl = documet.createElement('div');
+        const messageEl = this.messageEl = document.createElement('div');
         let startOpened = this.data.startOpened;
         this.toggleInfoMessage = this.toggleInfoMessage.bind(this);
 
@@ -27,6 +27,7 @@ AFRAME.registerComponent('info-message', {
     },
     update() {
         const messageEl = this.messageEl;
+
         messageEl.innerHTML = this.data.htmlSrc.data;
         messageEl.appendChild(this.closeButtonEl);
     },
@@ -56,7 +57,7 @@ AFRAME.registerComponent('info-message', {
 
             .a-close-button-info:hover{background-color: #b32146; color: white}
             .a-info-message-container {position: absolute; left: 80px; bottom: 20px;}
-            .a-info-message-button {background: rgba(0, 0, 0, 0.20)  this.infoMessageButtonDataURI + ' 50% 50% no-repeat;}
+            .a-info-message-button {background: rgba(0, 0, 0, 0.20)  ${this.infoMessageButtonDataURI} 50% 50% no-repeat;}
             .a-info-message-button {background-size: 90% 90%; border: 0; bottom: 0; cursor: pointer; min-width: 58px; min-height: 34px; padding-right: 0; padding-top: 0; position: absolute; right: 0; transition: background-color .05s ease; -webkit-transition: background-color .05s ease; z-index: 9999; border-radius: 8px; touch-action: manipulation;}
             .a-info-message-button:active, .a-info-message-button:hover {background-color: #ef2d5e;}
         `;
@@ -72,7 +73,7 @@ AFRAME.registerComponent('info-message', {
         let display = this.messageEl.style.display;
         this.infoButton.style.display = display;
         display = display === 'none' ? '' : 'none';
-        this.messageEl.styl.display = display;
+        this.messageEl.style.display = display;
     },
     createInfoButton(onClick) {
         let infoButton, wrapper;
