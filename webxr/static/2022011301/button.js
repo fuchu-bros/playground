@@ -1,13 +1,14 @@
 AFRAME.registerComponent('button', {
     schema: {
         label: {default: 'label'},
-        width: {detault: 0.11},
+        width: {default: 0.11},
         toggable: {default: false}
     },
     init() {
         const el = this.el;
         const labelEl = this.labelEl = document.createElement('a-entity');
 
+        console.log(this.data.label, this.data.width);
         this.color = '#3a50c5';
         el.setAttribute('geometry', {
             primitive: 'box',

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="aframe-master.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.0/dist/aframe-environment-component.min.js"></script>
+    <script src="../2022011007/info-mssage.js"></script>
+    <!-- highlight.js -->
+    <script>
+        AFRAME.registerComponent('highlight', {
+            init() {
+                const buttonEls = this.buttonEls = this.el.querySelectorAll('.menu-button');
+                const backgroundEl = document.querySelector('#background');
+                this.onClick = this.onClick.bind(this);
+                this.onMouseEnter = this.onMouseEnter.bind(this);
+                this.onMouseLeave = this.onMouseLeave.bind(this);
+
+                this.reset = this.reset.bind(this);
+                backgroundEl.addEventListener('click', this.reset);
+
+                buttonEls.forEach((elem, i) => {
+                    elem.addEventListener('mouseenter', this.onMouseEnter);
+                    elem.addEventListener('mouseleave', this.onMouseLeave);
+                    elem.addEventListener('click', this.onClick);
+                });
+            },
+            onClick(e) {
+                this.buttonEls.forEach(elem => {
+                    const isActived = elem.object3D.scale.x > 1;
+                    if ( e.target === elem && isActived === false ) {
+                        elem.setAttribute('animation', 'property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 300');
+                    } else if (isActived) {
+                        elem.setAttribute('animation', 'property: scale; from: 1.2 1.2 1.2; to: 1 1 1; dur: 300');
+                        elem.setAttribute('material', 'color', 'white');
+                    }
+                })
+                e.target.setAttribute('material', 'color', '#046de7');
+                this.el.addState('clicked');
+            },
+            onMouseEnter(e) {
+                this.buttonEls.forEach(elem => {
+                    const isActived = elem.object3D.scale.x > 1;
+                    if (isActived === false) {
+                        elem.setAttribute('material', 'color', 'white');
+                    }
+                });
+                e.target.setAttribute('material', 'color', '#046de7');
+            },
+            onMouseLeave(e) {
+                if ( e.target.object3D.scale.x === 1 ) {
+                    e.target.setAttribute('material', 'color', 'white');
+                }
+            },
+            reset() {
+                const buttonEls = this.buttonEls;
+                for (let i = 0; i < buttonEls.length; ++i) {
+                    this.el.removeState('clicked');
+                    buttonEls[i].play();
+                    buttonEls[i].emit('mouseleave');
+                    buttonEls[i].object3D.scale.set(1, 1, 1);
+                }
+            }
+        });
+        AFRAME.registerComponent('info-panel', {
+            init() {
+                const buttonEls = document.querySelectorAll('.menu-button');
+                const fadeBackgroundEl = this.fadeBackgroundEl = document.querySelector('#fadeBackground');
+
+                this.movieImageEl;
+                this.movieTitleEl = document.querySelector('#movieTitle');
+                this.movieDescriptionEl = document.querySelector('#movieDescription');
+
+                this.movieInfo = {
+                    karigurashiButton: {
+                        title: 'The Secret World of Arrietty (2010)',
+                        imgEl: document.querySelector('#karigurashiMovieImage'),
+                        description: 'Based on the 1952 novel The Borrowers by Mary Norton, an English author of children\'s books, about a family of tiny people who live secretly in the walls and floors of a typical household, borrowing items from humans to survive.'
+                    },
+                    kazetachinuButton: {
+                        title: 'The Wind Rises (2013)',
+                        imgEl: document.querySelector('#kazetachinuMovieImage'),
+                        description: 'The Wind Rises is a fictionalised biographical film of Jiro Horikoshi (1903, 1982), designer of the Mitsubishi A5M fighter aircraft and its successor, the Mitsubishi A6M Zero, used by the Empire of Japan during World War II. The film is adapted from Miyazaki\'s manga of the same name, which was in turn loosely based on both the 1937 novel The Wind Has Risen by Tatsuo Hori and the life of Jiro Horikoshi.'
+                    },
+                    ponyoButton: {
+                        title: 'Ponyo (2003)',
+                        imgEl: document.querySelector('#ponyoMovieImage'),
+                        description: 'It is the eighth film Miyazaki directed for Studio Ghibli, and his tenth overall. The film tells the story of Ponyo (Nara), a goldfish who escapes from the ocean and is rescued by a five-year-old human boy, Sōsuke (Doi) after she is washed ashore while trapped in a glass jar.'
+                    }
+                };
+
+                this.onMenuButtonClick = this.onMenuButtonClick.bind(this);
+                buttonEls.forEach(elem => elem.addEventListener('click', this.onMenuButtonClick));
+                
+                this.onBackgroundClick = this.onBackgroundClick.bind(this);
+                this.backgroundEl = document.querySelector('#background');
+                this.backgroundEl.addEventListener('click', this.onBackgroundClick);
+
+                this.el.object3D.renderOrder = 9999999;
+                this.el.object3D.depthTest = false;
+
+                fadeBackgroundEl.object3D.renderOrder = 9;
+                fadeBackgroundEl.getObject3D('mesh').material.depthTest = false;
+            },
+            onMenuButtonClick(e) {
+                const movieInfo = this.movieInfo[e.currentTarget.id];
+
+                this.backgroundEl.object3D.scale.set(1, 1, 1);
+
+                this.el.object3D.scale.set(1, 1, 1);
+                if (AFRAME.utils.device.isMobile()) this.el.object3D.scale.set(1.4, 1.4, 1.4);
+                this.el.object3D.visible = true;
+                this.fadeBackgroundEl.object3D.visible = true;
+
+                if (this.movieImageEl) this.movieImageEl.object3D.visible = false;
+                this.movieImageEl = movieInfo.imgEl;
+                this.movieImageEl.object3D.visible = true;
+
+                this.movieTitleEl.setAttribute('text', 'value', movieInfo.title);
+                this.movieDescriptionEl.setAttribute('text', 'value', movieInfo.description);
+            },
+            onBackgroundClick(e) {
+                this.backgroundEl.object3D.scale.set(0.001, 0.001, 0.001);
+                this.el.object3D.scale.set(0.001, 0.001, 0.001);
+                this.el.object3D.visible = false;
+                this.fadeBackgroundEl.object3D.visible = false;
+            }
+        });
+    </script>
+</head>
+<body>
+    <a-scene 
+        background="color: #212"
+        webxr="referenceSpaceType: local"
+        environment
+        cursor="rayOrigin: mouse; fuse: false"
+        raycaster="objects: .raycastable"
+        info-message="htmlSrc: #messageText"
+    >
+        <a-assets>
+            <a-asset-item id="messageText" src="message.html"></a-asset-item>
+            
+            <img id="kazetachinu" src="https://cdn.aframe.io/examples/ui/kazetachinu.jpg" crossorigin="anonymous"/>
+            <img id="kazetachinuPoster" src="https://cdn.aframe.io/examples/ui/kazetachinuPoster.jpg" crossorigin="anonymous"/>
+            
+            <img id="ponyo" src="https://cdn.aframe.io/examples/ui/ponyo.jpg" crossorigin="anonymous"/>
+            <img id="ponyoPoster" src="https://cdn.aframe.io/examples/ui/ponyoPoster.jpg" crossorigin="anonymous"/>
+            
+            <img id="karigurashi" src="https://cdn.aframe.io/examples/ui/karigurashi.jpg" crossorigin="anonymous"/>
+            <img id="karigurashiPoster" src="https://cdn.aframe.io/examples/ui/karigurashiPoster.jpg" crossorigin="anonymous"/>
+
+            <a-mixin id="frame"
+                geometry="primitive: plane; width: 0.5783552; height: 0.8192"
+                material="color: white; shader: flat"
+                animation_scale="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
+                animation_scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+            ></a-mixin>
+            <a-mixin id="poster"
+                geometry="primitive: plane; width: 0.544768; height: 0.786432"
+                material="color: white; shader: flat"
+                position="0 0 0.005"
+            ></a-mixin>
+            <a-mixin id="movieImage"
+                geometry="primitive: plane; width: 1.5; height: 0.81"
+                material="src: #ponyo; shader: flat; transparent: true"
+                position="0 0.495 0.002"
+            ></a-mixin>
+        </a-assets>
+        <a-entity id="background"
+            position="0 0 0"
+            geometry="primitive: sphere; radius: 2.0"
+            material="color: red; side: back; shader: flat"
+            scale="0.001 0.001 0.001"
+            visible="false"
+            class="raycastable"
+        ></a-entity>
+        <a-entity position="0 1.6 0" camera look-controls="magicWindowTrackingEnabled: false; touchEnabled: false; mouseEnabled: false">
+            <a-entity id="fadeBackground"
+                geometry="primitive: sphere; radius: 2.5"
+                material="color: black; side: back; shader: flat; transparent: true; opacity: 0.6;" visible="false"></a-entity>
+            ></a-entity>
+        </a-entity>
+
+        <a-entity id="leftHand"
+            laser-controls="hand: left"
+            raycaster="objects: .raycastable"
+        ></a-entity>
+        <a-entity id="rightHand"
+            laser-controls="hand: right"
+            raycaster="objects: .raycastable"
+            line="color: #118A7E"
+        ></a-entity>
+
+        <a-entity id="ui" position="0 1.6 -2.5">
+            <a-entity id="menu" highlight>
+                <a-entity id="karigurashiButton" position="-0.8 0 0" mixin="frame" class="raycastable menu-button">
+                    <a-entity material="src: #karigurashiPoster" mixin="poster"></a-entity>
+                </a-entity>
+                <a-entity id="kazetachinuButton" position="0 0 0" mixin="frame" class="raycastable menu-button">
+                    <a-entity material="src: #kazetachinuPoster" mixin="poster"></a-entity>
+                </a-entity>
+                <a-entity id="ponyoButton" position="0.8 0 0" mixin="frame" class="raycastable menu-button">
+                    <a-entity material="src: #ponyoPoster" mixin="poster"></a-entity>
+                </a-entity>
+            </a-entity>
+            <a-entity id="infoPanel"
+                position="0 0 0.5"
+                info-panel
+                visible="false"
+                scale="0.001 0.001 0.001"
+                geometry="primitive: plane; width: 1.5; height: 1.8"
+                material="color: #333333; shader: flat; transparent: false"
+                class="raycastable"
+            >
+                <a-entity id="ponyoMovieImage" mixin="movieImage" material="src: #ponyo" visible="false"></a-entity>
+                <a-entity id="kazetachinuMovieImage" mixin="movieImage" material="src: #kazetachinu" visible="false"></a-entity>
+                <a-entity id="karigurashiMovieImage" mixin="movieImage" material="src: #karigurashi" visible="false"></a-entity>
+                <a-entity id="movieTitle"
+                    position="-0.68 -0.1 0"
+                    text="shader: msdf; anchor: left; width: 1.5; font: https://cdn.aframe.io/examples/ui/Viga-Regular.json; color: white; value: Ponyo (2003)"
+                ></a-entity>
+                <a-entity id="movieDescription"
+                    position="-0.68 -0.2 0"
+                    text="baseline: top; shader: msdf; anchor: left; font: https://cdn.aframe.io/examples/ui/Viga-Regular.json; color: white; value: Lorem...."
+                ></a-entity>
+            </a-entity>
+        </a-entity>
+    </a-scene>
+</body>
+</html>
