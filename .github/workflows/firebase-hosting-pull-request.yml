@@ -13,5 +13,5 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MONEY_STACK }}'
-          projectId: money-stack
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OZWORKS_C52CA }}'
+          projectId: ozworks-c52ca

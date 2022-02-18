@@ -1,0 +1,12 @@
+{
+  "name": "crawling",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "axios": "^0.26.0",
+    "moment": "^2.29.1",
+    "waait": "^1.0.5"
+  }
+}

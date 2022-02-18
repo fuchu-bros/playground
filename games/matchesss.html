@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matchesss</title>
+    <style>
+        .fixed{
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+        }
+        #app{
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: green;
+        }
+        
+        #app .card{display:block;border: 1px solid #dfdfdf;}
+        #app .card-1{background: red;}
+        #app .card-2{background: blue;}
+        #app .card-3{background: aqua;}
+        #app .card-4{background: yellow;}
+        #app .card-5{background: pink;}
+        #app .card-6{background: khaki;}
+        #app .card-7{background: mediumpurple;}
+        #app .card-8{background: maroon;}
+        #app .card-9{background: darksalmon;}
+        #app .card-10{background: slategray;}
+
+        .board{
+            display: flex;
+            flex: 1;
+        }
+        .board > .col{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .board > .col + .col{margin-left: 20px}
+        .board > .col .card{cursor: default;flex: 1}
+        .board > .col .card:last-child{cursor: pointer;}
+
+        .deck{
+            height: 80px;width: 50%;background: black;margin: 10px auto 0;
+            display: flex;
+        }
+        .deck .card{width: 25%;}
+
+        .ending{
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+
+            cursor: default;
+        }
+
+        .dashboard{
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+        .dashboard .point{
+            font-size: 18px;
+            color: white;
+        }
+        .dashboard .point::before{content: "점수 : ";}
+        .dashboard .point::after{content: "점";}
+
+        .reset{position: absolute; bottom: 20px; left: 20px;}
+    </style>
+</head>
+<body>
+    <div id="app" class="fixed">
+        <div class="board">
+            <div class="col col1"></div>
+            <div class="col col2"></div>
+            <div class="col col3"></div>
+            <div class="col col4"></div>
+            <div class="col col5"></div>
+        </div>
+        <div class="deck"></div>
+    </div>
+    <div class="dashboard">
+        <div class="point"></div>
+    </div>
+    <button class="reset">Restart</button>
+    <script>
+        let point = 0;
+        const deckElem = document.querySelector('.deck');
+
+        const calcResult = () => {
+            const {length} = deckElem.childNodes;
+            if (length > 1) {
+                const matchType = deckElem.querySelector('.card:last-child').getAttribute('data-cardNo');
+                const matchedItems = deckElem.querySelectorAll(`.card-${matchType}`);
+
+                console.log("Matches", matchedItems);
+
+                if ( matchedItems.length > 1 ) {
+                    [...matchedItems].forEach(item => item.remove());
+                    point += 10;
+                } else {
+                    if (length >= 4) {
+                        gameOver();
+                        return;
+                    }
+                }
+                printPoint();
+            }
+            // nothing
+        }
+
+        const printPoint = () => document.querySelector('.point').textContent = point;
+
+        const makeRandCard = () => {
+            const randNo = Math.ceil(Math.random() * 10);
+            const divElem = document.createElement('div');
+            divElem.innerHTML = `<a href="#" class="card card-${randNo}" data-cardNo="${randNo}"></a>`;
+            return divElem.children[0];
+        }
+
+        const initGame = () => {
+            [...document.querySelectorAll('.card')].forEach(elem => elem.remove());
+            document.querySelector('.ending')?.remove();
+            new Array(5).fill(null).forEach((v, index) => {
+                const colElem = document.querySelector(`.col${index + 1}`);
+                for(let idx in new Array(10).fill(0)) {
+                    colElem.appendChild(makeRandCard());
+                }
+            });
+            point = 0;
+            printPoint();
+        }
+
+        const gameOver = () => {
+            const screenElem = document.createElement('div');
+            screenElem.classList.add('ending', 'fixed');
+            screenElem.textContent = 'Game Over...';
+            document.body.appendChild(screenElem);
+            setTimeout(() => {
+                initGame()
+            }, 3000);
+        }
+
+        document.querySelector('.reset').addEventListener('click', e => {
+            e.preventDefault();
+            if (confirm('End game?')) {
+                gameOver();
+            }
+        });
+
+        document.querySelector('.board').addEventListener('click', e => {
+            e.preventDefault();
+            if ( e.target.nextElementSibling === null ) {
+                e.target.parentNode.prepend(makeRandCard());
+                deckElem.appendChild(e.target);
+                calcResult();
+            }
+        });
+
+        window.onload = () => initGame();
+    </script>
+</body>
+</html>
